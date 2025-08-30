@@ -1,0 +1,100 @@
+### ======================================================================
+### VARIÁVEIS GLOBAIS
+### Altere a porta se a sua API estiver rodando em uma diferente.
+### ======================================================================
+@baseUrl = http://localhost:3000
+
+### ======================================================================
+### ENDPOINTS DE ATORES (/atores)
+### ======================================================================
+
+### 1. Criar um novo ator (Tom Hanks)
+# @name createAtor1
+POST {{baseUrl}}/atores
+Content-Type: application/json
+
+{
+    "nome": "Tom Hanks",
+    "data_nascimento": "1956-07-09"
+}
+
+### 2. Criar um segundo ator (Scarlett Johansson)
+# @name createAtor2
+POST {{baseUrl}}/atores
+Content-Type: application/json
+
+{
+    "nome": "Scarlett Johansson",
+    "data_nascimento": "1984-11-22"
+}
+
+### 3. Listar todos os atores
+GET {{baseUrl}}/atores
+
+### 4. Buscar um ator específico pelo ID (Ex: ID 1)
+GET {{baseUrl}}/atores/1
+
+### 5. Atualizar parcialmente um ator (Ex: ID 1)
+# Vamos alterar apenas o nome.
+PATCH {{baseUrl}}/atores/1
+Content-Type: application/json
+
+{
+    "nome": "Thomas Jeffrey Hanks"
+}
+
+### ======================================================================
+### ENDPOINTS DE FILMES (/filmes)
+### ======================================================================
+
+### 6. Criar um novo filme associando os atores criados
+# Supondo que os atores criados receberam os IDs 1 e 2.
+# Verifique o retorno da criação dos atores para confirmar os IDs corretos.
+POST {{baseUrl}}/filmes
+Content-Type: application/json
+
+{
+    "nome": "Vingadores: Ultimato",
+    "ano_lancamento": 2019,
+    "sinopse": "Após os eventos devastadores de 'Vingadores: Guerra Infinita', o universo está em ruínas. Com a ajuda dos aliados restantes, os Vingadores se reúnem mais uma vez para reverter as ações de Thanos e restaurar o equilíbrio do universo.",
+    "atoresIds": [2]
+}
+
+### 7. Criar um segundo filme (sem atores para testar o campo opcional)
+POST {{baseUrl}}/filmes
+Content-Type: application/json
+
+{
+    "nome": "Forrest Gump",
+    "ano_lancamento": 1994,
+    "sinopse": "A história de um homem com baixo QI que testemunha e influencia vários eventos históricos definidores na segunda metade do século XX nos Estados Unidos.",
+    "atoresIds": [1]
+}
+
+
+### 8. Listar todos os filmes
+# A resposta deve incluir a lista de atores em cada filme.
+GET {{baseUrl}}/filmes
+
+### 9. Buscar um filme específico pelo ID (Ex: ID 1)
+GET {{baseUrl}}/filmes/3
+
+### 10. Atualizar parcialmente um filme (Ex: ID 1)
+# Vamos apenas atualizar a sinopse e a lista de atores.
+PATCH {{baseUrl}}/filmes/3
+Content-Type: application/json
+
+{
+    "sinopse": "Uma nova sinopse atualizada para o filme.",
+    "atoresIds": [1, 2]
+}
+
+### ======================================================================
+### ENDPOINTS DE REMOÇÃO (Execute por último)
+### ======================================================================
+
+### 11. Remover um filme pelo ID (Ex: ID 2)
+DELETE {{baseUrl}}/filmes/3
+
+### 12. Remover um ator pelo ID (Ex: ID 2)
+DELETE {{baseUrl}}/atores/2
