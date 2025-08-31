@@ -6,9 +6,9 @@ import { FilmeModule } from 'src/filme/filme.module';
 import { AtorRepository } from './ator.respository';
 
 @Module({
-  imports: [DatabaseModule],
+  imports: [DatabaseModule, forwardRef(() => FilmeModule)],
   controllers: [AtorController],
   providers: [AtorService, AtorRepository],
-  exports: [AtorService],
+  exports: [AtorRepository, AtorService],
 })
 export class AtorModule {}

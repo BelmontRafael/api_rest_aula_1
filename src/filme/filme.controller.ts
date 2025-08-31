@@ -40,4 +40,13 @@ export class FilmeController {
     return this.filmeService.findActors(id);
   }
 
+    // NOVO ENDPOINT DE ASSOCIAÇÃO
+    @Post(':filmeId/atores/:atorId')
+    addAtor(
+        @Param('filmeId', ParseIntPipe) filmeId: number,
+        @Param('atorId', ParseIntPipe) atorId: number,
+    ): Promise<AtorSummaryDto[]> {
+        return this.filmeService.addAtorAoFilme(filmeId, atorId);
+    }
+
 }

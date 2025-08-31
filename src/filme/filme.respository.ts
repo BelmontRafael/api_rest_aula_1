@@ -112,21 +112,24 @@ export class FilmeRepository {
         return (filme.atores || []).map(ator => AtorSummaryDto.fromEntity(ator));
   }
 
-  async addActor(filmeId: number, atorId: number): Promise<void> {
-    const filme = await Filme.findByPk(filmeId);
+    async findEntityById(id: number): Promise<Filme> {
+        const filme = await Filme.findByPk(id, {
+            include: [Ator], // <-- AQUI ESTÁ A CORREÇÃO!
+        });
 
-    if (!filme) {
-      throw new NotFoundException(`Filme com ID ${filmeId} não encontrado.`);
+        if (!filme) {
+            throw new NotFoundException(`Filme com ID ${id} não encontrado.`);
+        }
+        
+        // Agora o 'filme' retornado terá a propriedade 'atores'
+        // que será um array (mesmo que vazio), e não 'undefined'.
+        return filme;
     }
 
-    const transaction = await this.sequelize.transaction();
-
-    try {
-      await filme.$add('ator', atorId, { transaction });
-      await transaction.commit();
-    } catch (error) {
-      await transaction.rollback();
-      throw new BadRequestException('Erro ao adicionar o ator ao filme.', error.message);
+    async associarAtor(filme: Filme, ator: Ator): Promise<Filme> {
+        await filme.$add('atores', ator);
+        // Recarregamos para retornar o filme com a lista de atores atualizada
+        return filme.reload({ include: [Ator] });
     }
-  }
+
 }

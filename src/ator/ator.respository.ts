@@ -98,4 +98,12 @@ export class AtorRepository {
             },
         });
     }
+
+    async findEntityById(id: number): Promise<Ator> {
+        const ator = await Ator.findByPk(id);
+        if (!ator) {
+            throw new NotFoundException(`Ator com ID ${id} não encontrado.`);
+        }
+        return ator;
+    }
 }
