@@ -4,6 +4,8 @@ import { AtorRepository } from 'src/ator/ator.respository';
 import { CreateFilmeDto } from './dto/create-filme.dto';
 import { UpdateFilmeDto } from './dto/update-filme.dto';
 import { FilmeDto } from './dto/filme.dto';
+import { AtorDto } from 'src/ator/dto/ator.dto';
+import { AtorSummaryDto } from 'src/ator/dto/ator-summary.dto';
 
 @Injectable()
 export class FilmeService {
@@ -30,5 +32,9 @@ export class FilmeService {
         return this.filmeRepository.remove(id);
     }
 
+      // New method: Get all actors for a film
+    async findActors(filmeId: number): Promise<AtorSummaryDto[]> {
+        return this.filmeRepository.findActors(filmeId);
+  }
 
 }

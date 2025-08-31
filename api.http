@@ -57,7 +57,7 @@ Content-Type: application/json
     "nome": "Vingadores: Ultimato",
     "ano_lancamento": 2019,
     "sinopse": "Após os eventos devastadores de 'Vingadores: Guerra Infinita', o universo está em ruínas. Com a ajuda dos aliados restantes, os Vingadores se reúnem mais uma vez para reverter as ações de Thanos e restaurar o equilíbrio do universo.",
-    "atoresIds": [2]
+    "atoresIds": [4]
 }
 
 ### 7. Criar um segundo filme (sem atores para testar o campo opcional)
@@ -98,3 +98,9 @@ DELETE {{baseUrl}}/filmes/3
 
 ### 12. Remover um ator pelo ID (Ex: ID 2)
 DELETE {{baseUrl}}/atores/2
+
+### Get actors for a film (replace 1 with a valid film ID)
+GET {{baseUrl}}/filmes/4/atores
+Content-Type: application/json
+
+###

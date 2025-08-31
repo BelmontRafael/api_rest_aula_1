@@ -5,6 +5,8 @@ import { FilmeDto } from './dto/filme.dto';
 import { UpdateFilmeDto } from './dto/update-filme.dto';
 import { Sequelize } from 'sequelize-typescript';
 import { Filme } from './entities/filme.entity';
+import { AtorDto } from 'src/ator/dto/ator.dto';
+import { AtorSummaryDto } from 'src/ator/dto/ator-summary.dto';
 
 @Injectable()
 export class FilmeRepository {
@@ -98,14 +100,33 @@ export class FilmeRepository {
         await filme.destroy();
     }
 
-        async countByIds(ids: number[]): Promise<number> {
-        if (!ids || ids.length === 0) {
-            return 0;
-        }
-        return Filme.count({
-            where: {
-                id: ids,
-            },
+    async findActors(filmeId: number): Promise<AtorSummaryDto[]> {
+        const filme = await Filme.findByPk(filmeId, {
+        include: [Ator],
         });
+
+        if (!filme) {
+        throw new NotFoundException(`Filme com ID ${filmeId} não encontrado.`);
+        }
+
+        return (filme.atores || []).map(ator => AtorSummaryDto.fromEntity(ator));
+  }
+
+  async addActor(filmeId: number, atorId: number): Promise<void> {
+    const filme = await Filme.findByPk(filmeId);
+
+    if (!filme) {
+      throw new NotFoundException(`Filme com ID ${filmeId} não encontrado.`);
     }
+
+    const transaction = await this.sequelize.transaction();
+
+    try {
+      await filme.$add('ator', atorId, { transaction });
+      await transaction.commit();
+    } catch (error) {
+      await transaction.rollback();
+      throw new BadRequestException('Erro ao adicionar o ator ao filme.', error.message);
+    }
+  }
 }
