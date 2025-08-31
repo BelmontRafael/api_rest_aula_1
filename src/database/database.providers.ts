@@ -2,6 +2,8 @@ import { Sequelize } from "sequelize-typescript"
 import { Ator } from "src/ator/entities/ator.entity"
 import { Filme } from "src/filme/entities/filme.entity"
 import { FilmesAtores } from "src/filme/entities/filmes-atores.entity"
+import { FilmesGeneros } from "src/filme/entities/filmes-generos.entity"
+import { Genero } from "src/genero/entities/genero.entity"
 
 const dotenv = require('dotenv')
 
@@ -22,7 +24,9 @@ export const databaseProviders = [
 			sequelize.addModels([
 				Filme,
 				Ator,
-				FilmesAtores
+				FilmesAtores,//
+				Genero,
+				FilmesGeneros
 			])
 			await sequelize.sync()
 			return sequelize

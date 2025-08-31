@@ -1,26 +1,30 @@
-import { Injectable } from '@nestjs/common';
-import { CreateGeneroDto } from './dto/create-genero.dto';
-import { UpdateGeneroDto } from './dto/update-genero.dto';
+import { Injectable } from "@nestjs/common";
+import { GeneroRepository } from "./genero.repository";
+import { CreateGeneroDto } from "./dto/create-genero.dto";
+import { GeneroDto } from "./dto/genero.dto";
+import { UpdateGeneroDto } from "./dto/update-genero.dto";
 
 @Injectable()
 export class GeneroService {
-  create(createGeneroDto: CreateGeneroDto) {
-    return 'This action adds a new genero';
-  }
+    constructor(private readonly generoRepository: GeneroRepository) {}
 
-  findAll() {
-    return `This action returns all genero`;
-  }
+    create(createGeneroDto: CreateGeneroDto): Promise<GeneroDto> {
+        return this.generoRepository.create(createGeneroDto);
+    }
 
-  findOne(id: number) {
-    return `This action returns a #${id} genero`;
-  }
+    findAll(): Promise<GeneroDto[]> {
+        return this.generoRepository.findAll();
+    }
 
-  update(id: number, updateGeneroDto: UpdateGeneroDto) {
-    return `This action updates a #${id} genero`;
-  }
+    findOne(id: number): Promise<GeneroDto> {
+        return this.generoRepository.findOne(id);
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} genero`;
-  }
+    update(id: number, updateGeneroDto: UpdateGeneroDto): Promise<GeneroDto> {
+        return this.generoRepository.update(id, updateGeneroDto);
+    }
+
+    remove(id: number): Promise<void> {
+        return this.generoRepository.remove(id);
+    }
 }

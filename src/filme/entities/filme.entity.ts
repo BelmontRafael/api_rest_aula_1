@@ -1,6 +1,8 @@
 import { AutoIncrement, BelongsTo, BelongsToMany, Column, DataType, HasMany, Model, PrimaryKey, Table } from "sequelize-typescript";
 import { FilmesAtores } from "./filmes-atores.entity";
 import { Ator } from "src/ator/entities/ator.entity";
+import { Genero } from "src/genero/entities/genero.entity";
+import { FilmesGeneros } from "./filmes-generos.entity";
 
 @Table({
 	tableName: 'filmes',
@@ -25,4 +27,7 @@ export class Filme extends Model{
 
     @BelongsToMany(() => Ator, () => FilmesAtores)
     declare atores: Ator[];
+
+    @BelongsToMany(() => Genero, () => FilmesGeneros)
+    declare generos: Genero[];
 }

@@ -14,96 +14,99 @@ POST {{baseUrl}}/atores
 Content-Type: application/json
 
 {
-    "nome": "Bill Clinton",
+    "nome": "Andrew Lincon",
     "data_nascimento": "1956-07-09"
 }
 
-### 2. Criar um segundo ator (Scarlett Johansson)
-# @name createAtor2
-POST {{baseUrl}}/atores
-Content-Type: application/json
 
-{
-    "nome": "Scarlett Johansson",
-    "data_nascimento": "1984-11-22"
-}
-
-### 3. Listar todos os atores
+### 2. Listar todos os atores
 GET {{baseUrl}}/atores
 
-### 4. Buscar um ator específico pelo ID (Ex: ID 1)
+### 3. Buscar um ator específico pelo ID (Ex: ID 1)
 GET {{baseUrl}}/atores/1
 
-### 5. Atualizar parcialmente um ator (Ex: ID 1)
+### 4. Atualizar parcialmente um ator (Ex: ID 1)
 # Vamos alterar apenas o nome.
 PATCH {{baseUrl}}/atores/1
 Content-Type: application/json
 
 {
-    "nome": "Thomas Jeffrey Hanks"
+    "nome": "Norman Reedus"
 }
+
+### 5. Buscar atores de um filme específico pelo ID do filme (Ex: ID 4)
+GET {{baseUrl}}/filmes/4/atores
+Content-Type: application/json
+
+### 6. Adicionar um ator a um filme
+POST http://localhost:3000/filmes/1/atores/1
+
+### 7. Remover um ator pelo ID (Ex: ID 2)
+DELETE {{baseUrl}}/atores/2
 
 ### ======================================================================
 ### ENDPOINTS DE FILMES (/filmes)
 ### ======================================================================
 
-### 6. Criar um novo filme associando os atores criados
+### 8. Criar um novo filme associando os atores criados
 # Supondo que os atores criados receberam os IDs 1 e 2.
 # Verifique o retorno da criação dos atores para confirmar os IDs corretos.
 POST {{baseUrl}}/filmes
 Content-Type: application/json
 
 {
-    "nome": "Vingadores: Ultimato",
-    "ano_lancamento": 2019,
-    "sinopse": "Após os eventos devastadores de 'Vingadores: Guerra Infinita', o universo está em ruínas. Com a ajuda dos aliados restantes, os Vingadores se reúnem mais uma vez para reverter as ações de Thanos e restaurar o equilíbrio do universo.",
-    "atoresIds": [4]
+    "nome": "O filme",
+    "ano_lancamento": 2007,
+    "generosIds": [1]
 }
 
-### 7. Criar um segundo filme (sem atores para testar o campo opcional)
-POST {{baseUrl}}/filmes
-Content-Type: application/json
-
-{
-    "nome": "Forrest Gump",
-    "ano_lancamento": 1994,
-    "sinopse": "A história de um homem com baixo QI que testemunha e influencia vários eventos históricos definidores na segunda metade do século XX nos Estados Unidos.",
-    "atoresIds": [1]
-}
-
-
-### 8. Listar todos os filmes
+### 9. Listar todos os filmes
 # A resposta deve incluir a lista de atores em cada filme.
 GET {{baseUrl}}/filmes
 
-### 9. Buscar um filme específico pelo ID (Ex: ID 1)
-GET {{baseUrl}}/filmes/3
+### 10. Buscar um filme específico pelo ID (Ex: ID 1)
+GET {{baseUrl}}/filmes/1
 
-### 10. Atualizar parcialmente um filme (Ex: ID 1)
+### 11. Atualizar parcialmente um filme (Ex: ID 1)
 # Vamos apenas atualizar a sinopse e a lista de atores.
 PATCH {{baseUrl}}/filmes/3
 Content-Type: application/json
 
 {
     "sinopse": "Uma nova sinopse atualizada para o filme.",
-    "atoresIds": [1, 2]
+    "atoresIds": [1, 2],
+    "generosIds": [1, 3]
 }
 
-### ======================================================================
-### ENDPOINTS DE REMOÇÃO (Execute por último)
-### ======================================================================
-
-### 11. Remover um filme pelo ID (Ex: ID 2)
+### 12. Remover um filme pelo ID (Ex: ID 2)
 DELETE {{baseUrl}}/filmes/3
 
-### 12. Remover um ator pelo ID (Ex: ID 2)
-DELETE {{baseUrl}}/atores/2
+### ======================================================================
+### ENDPOINTS DE GÊNEROS (/generos) 🎭
+### ======================================================================
 
-### Get actors for a film (replace 1 with a valid film ID)
-GET {{baseUrl}}/filmes/4/atores
+### 13. Criar um novo gênero (Ação)
+POST {{baseUrl}}/generos
 Content-Type: application/json
 
-###
+{
+    "nome": "Ação"
+}
 
-### Adicionar um ator a um filme
-POST http://localhost:3000/filmes/4/atores/5
+### 14. Listar todos os gêneros
+GET {{baseUrl}}/generos
+
+### 15. Buscar um gênero específico (Ex: ID 1)
+# Lembre-se de ajustar o ID para um que exista no seu banco de dados.
+GET {{baseUrl}}/generos/1
+
+### 16. Atualizar um gênero (Ex: ID 1)
+PATCH {{baseUrl}}/generos/1
+Content-Type: application/json
+
+{
+    "nome": "Ação & Aventura"
+}
+
+### 17. Remover um gênero (Ex: ID 3)
+DELETE {{baseUrl}}/generos/2

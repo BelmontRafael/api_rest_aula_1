@@ -35,4 +35,10 @@ export class CreateFilmeDto {
     @IsInt({ each: true, message: 'Cada ID de ator deve ser um número inteiro.' })
     @IsPositive({ each: true, message: 'Cada ID de ator deve ser um número positivo.' })
     atoresIds?: number[];
+
+    @IsOptional()
+    @IsArray({ message: 'A lista de gêneros deve ser um array de IDs.' })
+    @IsInt({ each: true, message: 'Cada ID de gênero deve ser um número inteiro.' })
+    @IsPositive({ each: true, message: 'Cada ID de gênero deve ser um número positivo.' })
+    generosIds?: number[];
 }

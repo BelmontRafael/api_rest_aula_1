@@ -7,10 +7,12 @@ import { Sequelize } from 'sequelize-typescript';
 import { Filme } from './entities/filme.entity';
 import { AtorDto } from 'src/ator/dto/ator.dto';
 import { AtorSummaryDto } from 'src/ator/dto/ator-summary.dto';
+import { Genero } from 'src/genero/entities/genero.entity';
 
 @Injectable()
 export class FilmeRepository {
     constructor(@Inject('SEQUELIZE') private sequelize: Sequelize) {}
+    
     async create(createFilmeDto: CreateFilmeDto): Promise<FilmeDto> {
 
         const transaction = await this.sequelize.transaction();
@@ -30,6 +32,13 @@ export class FilmeRepository {
                 await filme.$set('atores', createFilmeDto.atoresIds, { transaction });
 
                 await filme.reload({ include: [Ator], transaction });
+            }
+
+             if (createFilmeDto.generosIds && createFilmeDto.generosIds.length > 0) {
+
+                await filme.$set('generos', createFilmeDto.generosIds, { transaction });
+
+                await filme.reload({ include: [Genero], transaction });
             }
 
             await transaction.commit();
@@ -60,9 +69,13 @@ export class FilmeRepository {
                 await filme.$set('atores', updateFilmeDto.atoresIds, { transaction });
             }
 
+            if (updateFilmeDto.generosIds) {
+                await filme.$set('generos', updateFilmeDto.generosIds, { transaction });
+            }
+
             await transaction.commit();
 
-            await filme.reload({ include: [Ator] });
+            await filme.reload({ include: [Ator, Genero] });
             return FilmeDto.fromEntity(filme);
         } catch (error) {
             await transaction.rollback();
@@ -72,7 +85,7 @@ export class FilmeRepository {
 
     async findAll(): Promise<FilmeDto[]> {
         const filmes = await Filme.findAll({
-            include: [Ator],
+            include: [Ator, Genero],
             order: [['nome', 'ASC']],
         });
         return filmes.map(filme => FilmeDto.fromEntity(filme));
@@ -80,7 +93,7 @@ export class FilmeRepository {
 
     async findOne(id: number): Promise<FilmeDto> {
         const filme = await Filme.findByPk(id, {
-            include: [Ator],
+            include: [Ator, Genero],
         });
 
         if (!filme) {
@@ -102,7 +115,7 @@ export class FilmeRepository {
 
     async findActors(filmeId: number): Promise<AtorSummaryDto[]> {
         const filme = await Filme.findByPk(filmeId, {
-        include: [Ator],
+        include: [Ator, Genero],
         });
 
         if (!filme) {
@@ -114,21 +127,18 @@ export class FilmeRepository {
 
     async findEntityById(id: number): Promise<Filme> {
         const filme = await Filme.findByPk(id, {
-            include: [Ator], // <-- AQUI ESTÁ A CORREÇÃO!
+            include: [Ator, Genero],
         });
 
         if (!filme) {
             throw new NotFoundException(`Filme com ID ${id} não encontrado.`);
         }
         
-        // Agora o 'filme' retornado terá a propriedade 'atores'
-        // que será um array (mesmo que vazio), e não 'undefined'.
         return filme;
     }
 
     async associarAtor(filme: Filme, ator: Ator): Promise<Filme> {
         await filme.$add('atores', ator);
-        // Recarregamos para retornar o filme com a lista de atores atualizada
         return filme.reload({ include: [Ator] });
     }
 
