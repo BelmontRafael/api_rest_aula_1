@@ -35,7 +35,6 @@ export class FilmeService {
     }
 
     async remove(id: number): Promise<void> {
-        await this.validarIds();
         return this.filmeRepository.remove(id);
     }
 

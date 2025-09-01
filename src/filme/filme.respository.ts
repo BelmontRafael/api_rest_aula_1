@@ -106,4 +106,15 @@ export class FilmeRepository {
         
         return filme;
     }
+
+    async countByIds(ids: number[]): Promise<number> {
+        if (!ids || ids.length === 0) {
+            return 0;
+        }
+        return Filme.count({
+            where: {
+                id: ids,
+            },
+        });
+    }
 }
