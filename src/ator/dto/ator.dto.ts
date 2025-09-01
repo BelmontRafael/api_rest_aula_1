@@ -5,7 +5,7 @@ export class AtorDto {
     id: number;
     nome: string;
     data_nascimento: string | null;
-    filmes: FilmeSummaryDto[]
+    filmes: FilmeSummaryDto[];
 
     constructor(id: number, nome: string, data_nascimento: string | null, filmes: FilmeSummaryDto[]) {
         this.id = id;
