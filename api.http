@@ -55,9 +55,10 @@ POST {{baseUrl}}/filmes
 Content-Type: application/json
 
 {
-    "nome": "O filme",
+    "nome": "O filme 77",
     "ano_lancamento": 2007,
-    "generosIds": [1]
+    "generosIds": [1,5],
+    "atoresIds": [1,3]
 }
 
 ### 9. Listar todos os filmes
@@ -65,7 +66,7 @@ Content-Type: application/json
 GET {{baseUrl}}/filmes
 
 ### 10. Buscar um filme específico pelo ID (Ex: ID 1)
-GET {{baseUrl}}/filmes/1
+GET {{baseUrl}}/filmes/8
 
 ### 11. Atualizar parcialmente um filme (Ex: ID 1)
 # Vamos apenas atualizar a sinopse e a lista de atores.
@@ -79,7 +80,7 @@ Content-Type: application/json
 }
 
 ### 12. Remover um filme pelo ID (Ex: ID 2)
-DELETE {{baseUrl}}/filmes/3
+DELETE {{baseUrl}}/filmes/9
 
 ### ======================================================================
 ### ENDPOINTS DE GÊNEROS (/generos) 🎭

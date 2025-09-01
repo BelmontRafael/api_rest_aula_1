@@ -34,7 +34,6 @@ export class AtorController {
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)
-  @UseInterceptors(new HateoasInterceptor(generateAtorLinks))
   @Delete(':id')
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.atorService.remove(id);

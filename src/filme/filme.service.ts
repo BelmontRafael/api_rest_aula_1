@@ -12,9 +12,11 @@ export class FilmeService {
     constructor(
         private readonly filmeRepository: FilmeRepository,
         private readonly atorRepository: AtorRepository, 
+        private readonly generoRepository: GeneroRepository,
     ) {}
 
     async create(createFilmeDto: CreateFilmeDto): Promise<FilmeDto> {
+        await this.validarIds(createFilmeDto.atoresIds, createFilmeDto.generosIds);
         return this.filmeRepository.create(createFilmeDto);
     }
 
@@ -28,10 +30,12 @@ export class FilmeService {
     }
 
     async update(id: number, updateFilmeDto: UpdateFilmeDto): Promise<FilmeDto> {
+        await this.validarIds(updateFilmeDto.atoresIds, updateFilmeDto.generosIds);
         return this.filmeRepository.update(id, updateFilmeDto);
     }
 
     async remove(id: number): Promise<void> {
+        await this.validarIds();
         return this.filmeRepository.remove(id);
     }
 
@@ -40,7 +44,6 @@ export class FilmeService {
   }
 
     async addAtorAoFilme(filmeId: number, atorId: number): Promise<AtorSummaryDto[]> {
-
         const filme = await this.filmeRepository.findEntityById(filmeId);
         const ator = await this.atorRepository.findEntityById(atorId);
 
@@ -50,8 +53,25 @@ export class FilmeService {
         }
 
         const filmeAtualizado = await this.filmeRepository.associarAtor(filme, ator);
-
         return filmeAtualizado.atores.map(a => AtorSummaryDto.fromEntity(a));
+    }
+
+    private async validarIds(atoresIds?: number[], generosIds?: number[]): Promise<void> {
+        if (atoresIds && atoresIds.length > 0) {
+            const uniqueIds = [...new Set(atoresIds)];
+            const count = await this.atorRepository.countByIds(uniqueIds);
+            if (count !== uniqueIds.length) {
+                throw new BadRequestException('Um ou mais IDs de atores são inválidos.');
+            }
+        }
+
+        if (generosIds &&generosIds?.length > 0) {
+            const uniqueIds = [...new Set(generosIds)];
+            const count = await this.generoRepository.countByIds(uniqueIds);
+            if (count !== uniqueIds.length) {
+                throw new BadRequestException('Um ou mais IDs de gêneros são inválidos.');
+            }
+        }
     }
 
 }
