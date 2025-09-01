@@ -1,0 +1,112 @@
+### ======================================================================
+### VARIÁVEIS GLOBAIS
+### Altere a porta se a sua API estiver rodando em uma diferente.
+### ======================================================================
+@baseUrl = http://localhost:3000
+
+### ======================================================================
+### ENDPOINTS DE ATORES (/atores)
+### ======================================================================
+
+### 1. Criar um novo ator (Tom Hanks)
+# @name createAtor1
+POST {{baseUrl}}/atores
+Content-Type: application/json
+
+{
+    "nome": "Andrew Lincon",
+    "data_nascimento": "1956-07-09"
+}
+
+
+### 2. Listar todos os atores
+GET {{baseUrl}}/atores
+
+### 3. Buscar um ator específico pelo ID (Ex: ID 1)
+GET {{baseUrl}}/atores/3
+
+### 4. Atualizar parcialmente um ator (Ex: ID 1)
+# Vamos alterar apenas o nome.
+PATCH {{baseUrl}}/atores/2
+Content-Type: application/json
+
+{
+    "nome": "Carl Chiggs"
+}
+
+### 5. Buscar atores de um filme específico pelo ID do filme (Ex: ID 4)
+GET {{baseUrl}}/filmes/4/atores
+Content-Type: application/json
+
+### 6. Adicionar um ator a um filme
+POST http://localhost:3000/filmes/1/atores/3
+
+### 7. Remover um ator pelo ID (Ex: ID 2)
+DELETE {{baseUrl}}/atores/2
+
+### ======================================================================
+### ENDPOINTS DE FILMES (/filmes)
+### ======================================================================
+
+### 8. Criar um novo filme associando os atores criados
+# Supondo que os atores criados receberam os IDs 1 e 2.
+# Verifique o retorno da criação dos atores para confirmar os IDs corretos.
+POST {{baseUrl}}/filmes
+Content-Type: application/json
+
+{
+    "nome": "O filme",
+    "ano_lancamento": 2007,
+    "generosIds": [1]
+}
+
+### 9. Listar todos os filmes
+# A resposta deve incluir a lista de atores em cada filme.
+GET {{baseUrl}}/filmes
+
+### 10. Buscar um filme específico pelo ID (Ex: ID 1)
+GET {{baseUrl}}/filmes/1
+
+### 11. Atualizar parcialmente um filme (Ex: ID 1)
+# Vamos apenas atualizar a sinopse e a lista de atores.
+PATCH {{baseUrl}}/filmes/3
+Content-Type: application/json
+
+{
+    "sinopse": "Uma nova sinopse atualizada para o filme.",
+    "atoresIds": [1, 3],
+    "generosIds": [1, 5]
+}
+
+### 12. Remover um filme pelo ID (Ex: ID 2)
+DELETE {{baseUrl}}/filmes/3
+
+### ======================================================================
+### ENDPOINTS DE GÊNEROS (/generos) 🎭
+### ======================================================================
+
+### 13. Criar um novo gênero (Ação)
+POST {{baseUrl}}/generos
+Content-Type: application/json
+
+{
+    "nome": "Drama"
+}
+
+### 14. Listar todos os gêneros
+GET {{baseUrl}}/generos
+
+### 15. Buscar um gênero específico (Ex: ID 1)
+# Lembre-se de ajustar o ID para um que exista no seu banco de dados.
+GET {{baseUrl}}/generos/1
+
+### 16. Atualizar um gênero (Ex: ID 1)
+PATCH {{baseUrl}}/generos/1
+Content-Type: application/json
+
+{
+    "nome": "Ação & Aventura"
+}
+
+### 17. Remover um gênero (Ex: ID 3)
+DELETE {{baseUrl}}/generos/2
