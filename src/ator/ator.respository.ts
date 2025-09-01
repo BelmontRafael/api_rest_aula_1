@@ -1,5 +1,4 @@
 import { BadRequestException, Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { InjectModel } from '@nestjs/sequelize';
 import { Ator } from './entities/ator.entity';
 import { Filme } from 'src/filme/entities/filme.entity';
 import { CreateAtorDto } from './dto/create-ator.dto';
@@ -25,9 +24,9 @@ export class AtorRepository {
 
             if (createAtorDto.filmesIds && createAtorDto.filmesIds.length > 0) {
                 await ator.$set('filmes', createAtorDto.filmesIds, { transaction });
-                await ator.reload({ include: [Filme], transaction });
             }
 
+            await ator.reload({ include: [Filme], transaction });
             await transaction.commit();
             return AtorDto.fromEntity(ator);
         } catch (error) {
@@ -37,11 +36,7 @@ export class AtorRepository {
     }
 
     async update(id: number, updateAtorDto: UpdateAtorDto): Promise<AtorDto> {
-        const ator = await Ator.findByPk(id);
-        if (!ator) {
-            throw new NotFoundException(`Ator com ID ${id} não encontrado.`);
-        }
-
+        const ator = await this.findEntityById(id);
         const transaction = await this.sequelize.transaction();
 
         try {
@@ -69,22 +64,12 @@ export class AtorRepository {
     }
 
     async findOne(id: number): Promise<AtorDto> {
-        const ator = await Ator.findByPk(id, {
-            include: [Filme],
-        });
-
-        if (!ator) {
-            throw new NotFoundException(`Ator com ID ${id} não encontrado.`);
-        }
-
+        const ator = await this.findEntityById(id);
         return AtorDto.fromEntity(ator);
     }
 
     async remove(id: number): Promise<void> {
-        const ator = await Ator.findByPk(id);
-        if (!ator) {
-            throw new NotFoundException(`Ator com ID ${id} não encontrado.`);
-        }
+        const ator = await this.findEntityById(id);
         await ator.destroy();
     }
 
@@ -100,7 +85,10 @@ export class AtorRepository {
     }
 
     async findEntityById(id: number): Promise<Ator> {
-        const ator = await Ator.findByPk(id);
+        const ator = await Ator.findByPk(id, {
+            include: [Filme],
+        });
+
         if (!ator) {
             throw new NotFoundException(`Ator com ID ${id} não encontrado.`);
         }

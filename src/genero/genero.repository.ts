@@ -3,6 +3,7 @@ import { CreateGeneroDto } from "./dto/create-genero.dto";
 import { GeneroDto } from "./dto/genero.dto";
 import { Genero } from "./entities/genero.entity";
 import { UpdateGeneroDto } from "./dto/update-genero.dto";
+import { Filme } from "src/filme/entities/filme.entity";
 
 @Injectable()
 export class GeneroRepository {
@@ -12,7 +13,7 @@ export class GeneroRepository {
             const genero = await Genero.create({ nome: createGeneroDto.nome });
             return GeneroDto.fromEntity(genero);
         } catch (error) {
-            // Trata o erro de nome único
+            
             if (error.name === 'SequelizeUniqueConstraintError') {
                 throw new BadRequestException(`Gênero com nome '${createGeneroDto.nome}' já existe.`);
             }
@@ -21,16 +22,10 @@ export class GeneroRepository {
     }
 
     async findAll(): Promise<GeneroDto[]> {
-        const generos = await Genero.findAll({ order: [['nome', 'ASC']] });
+        const generos = await Genero.findAll({
+             include: [Filme],
+             order: [['nome', 'ASC']] });
         return generos.map(g => GeneroDto.fromEntity(g));
-    }
-
-    async findEntityById(id: number): Promise<Genero> {
-        const genero = await Genero.findByPk(id);
-        if (!genero) {
-            throw new NotFoundException(`Gênero com ID ${id} não encontrado.`);
-        }
-        return genero;
     }
 
     async findOne(id: number): Promise<GeneroDto> {
@@ -61,5 +56,15 @@ export class GeneroRepository {
             return 0;
         }
         return Genero.count({ where: { id: ids } });
+    }    
+    
+    async findEntityById(id: number): Promise<Genero> {
+        const genero = await Genero.findByPk(id, {
+            include: [Filme],
+        });
+        if (!genero) {
+            throw new NotFoundException(`Gênero com ID ${id} não encontrado.`);
+        }
+        return genero;
     }
 }

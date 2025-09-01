@@ -5,7 +5,6 @@ import { FilmeDto } from './dto/filme.dto';
 import { UpdateFilmeDto } from './dto/update-filme.dto';
 import { Sequelize } from 'sequelize-typescript';
 import { Filme } from './entities/filme.entity';
-import { AtorDto } from 'src/ator/dto/ator.dto';
 import { AtorSummaryDto } from 'src/ator/dto/ator-summary.dto';
 import { Genero } from 'src/genero/entities/genero.entity';
 
@@ -14,7 +13,6 @@ export class FilmeRepository {
     constructor(@Inject('SEQUELIZE') private sequelize: Sequelize) {}
     
     async create(createFilmeDto: CreateFilmeDto): Promise<FilmeDto> {
-
         const transaction = await this.sequelize.transaction();
 
         try {
@@ -28,42 +26,28 @@ export class FilmeRepository {
             );
 
             if (createFilmeDto.atoresIds && createFilmeDto.atoresIds.length > 0) {
-
-                await filme.$set('atores', createFilmeDto.atoresIds, { transaction });
-
-                await filme.reload({ include: [Ator], transaction });
+                await filme.$set('atores', createFilmeDto.atoresIds, { transaction })
             }
-
-             if (createFilmeDto.generosIds && createFilmeDto.generosIds.length > 0) {
-
+            if (createFilmeDto.generosIds && createFilmeDto.generosIds.length > 0) {
                 await filme.$set('generos', createFilmeDto.generosIds, { transaction });
-
-                await filme.reload({ include: [Genero], transaction });
             }
-
+            
+            await filme.reload({ include: [Ator, Genero], transaction });
             await transaction.commit();
 
             return FilmeDto.fromEntity(filme);
         } catch (error) {
-
             await transaction.rollback();
             throw new BadRequestException('Erro ao criar o filme.', error.message);
         }
     }
 
     async update(id: number, updateFilmeDto: UpdateFilmeDto): Promise<FilmeDto> {
-        const filme = await Filme.findByPk(id);
-
-        if (!filme) {
-            throw new NotFoundException(`Filme com ID ${id} não encontrado.`);
-        }
-
+        const filme = await this.findEntityById(id);
         const transaction = await this.sequelize.transaction();
 
         try {
-
             await filme.update(updateFilmeDto, { transaction });
-
 
             if (updateFilmeDto.atoresIds) {
                 await filme.$set('atores', updateFilmeDto.atoresIds, { transaction });
@@ -92,38 +76,24 @@ export class FilmeRepository {
     }
 
     async findOne(id: number): Promise<FilmeDto> {
-        const filme = await Filme.findByPk(id, {
-            include: [Ator, Genero],
-        });
-
-        if (!filme) {
-            throw new NotFoundException(`Filme com ID ${id} não encontrado.`);
-        }
-
+        const filme = await this.findEntityById(id);
         return FilmeDto.fromEntity(filme);
     }
 
     async remove(id: number): Promise<void> {
-        const filme = await Filme.findByPk(id);
-
-        if (!filme) {
-            throw new NotFoundException(`Filme com ID ${id} não encontrado.`);
-        }
-
+        const filme = await this.findEntityById(id);
         await filme.destroy();
     }
 
     async findActors(filmeId: number): Promise<AtorSummaryDto[]> {
-        const filme = await Filme.findByPk(filmeId, {
-        include: [Ator, Genero],
-        });
-
-        if (!filme) {
-        throw new NotFoundException(`Filme com ID ${filmeId} não encontrado.`);
-        }
-
+        const filme = await this.findEntityById(filmeId);
         return (filme.atores || []).map(ator => AtorSummaryDto.fromEntity(ator));
-  }
+    }
+
+    async associarAtor(filme: Filme, ator: Ator): Promise<Filme> {
+        await filme.$add('atores', ator);
+        return filme.reload({ include: [Ator, Genero] });
+    }
 
     async findEntityById(id: number): Promise<Filme> {
         const filme = await Filme.findByPk(id, {
@@ -137,9 +107,14 @@ export class FilmeRepository {
         return filme;
     }
 
-    async associarAtor(filme: Filme, ator: Ator): Promise<Filme> {
-        await filme.$add('atores', ator);
-        return filme.reload({ include: [Ator] });
+    async countByIds(ids: number[]): Promise<number> {
+        if (!ids || ids.length === 0) {
+            return 0;
+        }
+        return Filme.count({
+            where: {
+                id: ids,
+            },
+        });
     }
-
 }

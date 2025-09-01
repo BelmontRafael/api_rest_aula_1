@@ -37,7 +37,6 @@ export class FilmeController {
 
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete(':id')
-  @UseInterceptors(new HateoasInterceptor(generateFilmeLinks))
   remove(@Param('id', ParseIntPipe) id: number) {
     return this.filmeService.remove(id);
   }

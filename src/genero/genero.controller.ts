@@ -35,7 +35,6 @@ export class GeneroController {
 
     @HttpCode(HttpStatus.NO_CONTENT)
     @Delete(':id')
-    @UseInterceptors(new HateoasInterceptor(generateGeneroLinks))
     remove(@Param('id', ParseIntPipe) id: number) {
         return this.generoService.remove(id);
     }

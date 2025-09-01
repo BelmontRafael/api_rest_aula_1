@@ -1,9 +1,12 @@
-import { Module } from "@nestjs/common";
+import { forwardRef, Module } from "@nestjs/common";
 import { GeneroController } from "./genero.controller";
 import { GeneroService } from "./genero.service";
 import { GeneroRepository } from "./genero.repository";
+import { FilmeModule } from "src/filme/filme.module";
+import { DatabaseModule } from "src/database/database.module";
 
 @Module({
+    imports: [DatabaseModule, forwardRef(() => FilmeModule)],
     controllers: [GeneroController],
     providers: [GeneroService, GeneroRepository],
     exports: [GeneroRepository]
